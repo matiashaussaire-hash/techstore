@@ -70,7 +70,8 @@ function translateAuthError(message?: string | null): string {
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Start loading only when Supabase is configured; otherwise there's nothing to restore.
+  const [isLoading, setIsLoading] = useState(isSupabaseAuthReady());
 
   const syncProfile = async (
     client: typeof supabase,
@@ -102,7 +103,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const client = supabase;
     if (!isSupabaseAuthReady() || !client) {
-      setIsLoading(false);
       return;
     }
 

@@ -10,7 +10,16 @@ const missingEnvVars = [
 
 export const supabase =
   supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
+    ? createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          // Persist the session in localStorage so it survives page reloads
+          persistSession: true,
+          // Automatically refresh the access token when it expires
+          autoRefreshToken: true,
+          // Detect session from URL (needed for email confirmation redirects)
+          detectSessionInUrl: true,
+        },
+      })
     : null;
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);

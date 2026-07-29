@@ -9,7 +9,7 @@ export default function PaymentPendingPage() {
         <div className="rounded-[2rem] border border-amber-400/20 bg-slate-900/70 p-8">
           <h1 className="text-3xl font-semibold text-white">Pago pendiente</h1>
           <p className="mt-4 text-slate-400">El pago sigue en revisión. Te notificaremos cuando el estado final quede actualizado.</p>
-          <Link href="/perfil" className="mt-6 inline-block rounded-full bg-cyan-500 px-4 py-3 font-medium text-slate-950">
+          <Link href="/perfil" className="mt-6 inline-block cursor-pointer rounded-full bg-cyan-500 px-4 py-3 font-medium text-slate-950 transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95">
             Ver mi perfil
           </Link>
         </div>

@@ -28,13 +28,13 @@ function CatalogContent() {
           <input
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="rounded-full border border-white/10 bg-slate-950 px-4 py-3 text-slate-200"
+            className="rounded-full border border-white/10 bg-slate-950 px-4 py-3 text-slate-200 transition-colors duration-200 focus:border-cyan-400/50 focus:outline-none"
             placeholder="Buscar por nombre o descripción"
           />
           <select
             value={selectedCategory}
             onChange={(event) => setSelectedCategory(event.target.value)}
-            className="rounded-full border border-white/10 bg-slate-950 px-4 py-3 text-slate-200"
+            className="cursor-pointer rounded-full border border-white/10 bg-slate-950 px-4 py-3 text-slate-200 transition-colors duration-200 hover:border-white/20 focus:border-cyan-400/50 focus:outline-none"
           >
             <option value="all">Todas las categorías</option>
             {categories.map((category) => (

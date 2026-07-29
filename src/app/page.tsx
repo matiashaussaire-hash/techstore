@@ -24,10 +24,10 @@ export default function HomePage() {
               Desde notebooks y audio premium hasta wearables y accesorios, TechStore ofrece una experiencia de compra moderna y confiable.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link href="/catalogo" className="rounded-full bg-cyan-500 px-5 py-3 font-medium text-slate-950">
+              <Link href="/catalogo" className="cursor-pointer rounded-full bg-cyan-500 px-5 py-3 font-medium text-slate-950 transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95">
                 Ver catálogo
               </Link>
-              <Link href="/checkout" className="rounded-full border border-white/10 px-5 py-3 font-medium text-slate-200 hover:bg-white/10">
+              <Link href="/checkout" className="cursor-pointer rounded-full border border-white/10 px-5 py-3 font-medium text-slate-200 transition-all duration-200 hover:scale-105 hover:border-cyan-400/40 hover:bg-white/10 active:scale-95">
                 Finalizar compra
               </Link>
             </div>
@@ -50,13 +50,13 @@ export default function HomePage() {
         <section>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-white">Categorías</h2>
-            <Link href="/catalogo" className="text-sm text-cyan-400">
+            <Link href="/catalogo" className="cursor-pointer text-sm text-cyan-400 transition-colors duration-200 hover:text-cyan-300">
               Ver todo
             </Link>
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {categories.map((category) => (
-              <Link key={category.id} href={`/catalogo?category=${category.id}`} className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 hover:border-cyan-400/40">
+              <Link key={category.id} href={`/catalogo?category=${category.id}`} className="cursor-pointer rounded-2xl border border-white/10 bg-slate-900/70 p-5 transition-all duration-200 hover:scale-[1.03] hover:border-cyan-400/40 hover:shadow-lg hover:shadow-cyan-500/10 active:scale-95">
                 <h3 className="font-semibold text-white">{category.name}</h3>
                 <p className="mt-2 text-sm text-slate-400">{category.description}</p>
               </Link>
@@ -67,7 +67,7 @@ export default function HomePage() {
         <section>
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-2xl font-semibold text-white">Destacados</h2>
-            <Link href="/catalogo" className="text-sm text-cyan-400">
+            <Link href="/catalogo" className="cursor-pointer text-sm text-cyan-400 transition-colors duration-200 hover:text-cyan-300">
               Explorar catálogo
             </Link>
           </div>

@@ -20,7 +20,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/90 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-        <Link href="/" className="cursor-pointer text-lg font-semibold tracking-wide text-cyan-400">
+        <Link href="/" className="cursor-pointer text-lg font-semibold tracking-wide text-cyan-400 transition-colors duration-200 hover:text-cyan-300">
           TechStore
         </Link>
         <nav className="hidden gap-6 text-sm text-slate-300 md:flex">
@@ -28,7 +28,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`cursor-pointer ${pathname === link.href ? "text-white" : "hover:text-cyan-400"}`}
+              className={`cursor-pointer transition-colors duration-200 ${pathname === link.href ? "text-white" : "hover:text-cyan-400"}`}
             >
               {link.label}
             </Link>
@@ -37,19 +37,19 @@ export function Navbar() {
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              <Link href="/perfil" className="cursor-pointer rounded-full border border-cyan-400/40 px-3 py-2 text-sm text-cyan-300">
+              <Link href="/perfil" className="cursor-pointer rounded-full border border-cyan-400/40 px-3 py-2 text-sm text-cyan-300 transition-all duration-200 hover:scale-105 hover:border-cyan-400/70 hover:bg-cyan-500/10 active:scale-95">
                 {user.name}
               </Link>
-              <button type="button" onClick={logout} className="cursor-pointer text-sm text-slate-300 hover:text-white">
+              <button type="button" onClick={logout} className="cursor-pointer text-sm text-slate-300 transition-colors duration-200 hover:text-white">
                 Salir
               </button>
             </>
           ) : (
-            <Link href="/login" className="cursor-pointer rounded-full border border-cyan-400/40 px-3 py-2 text-sm text-cyan-300">
+            <Link href="/login" className="cursor-pointer rounded-full border border-cyan-400/40 px-3 py-2 text-sm text-cyan-300 transition-all duration-200 hover:scale-105 hover:border-cyan-400/70 hover:bg-cyan-500/10 active:scale-95">
               Iniciar sesión
             </Link>
           )}
-          <Link href="/carrito" className="cursor-pointer rounded-full bg-cyan-500 px-3 py-2 text-sm font-medium text-slate-950">
+          <Link href="/carrito" className="cursor-pointer rounded-full bg-cyan-500 px-3 py-2 text-sm font-medium text-slate-950 transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95">
             🛒 {itemCount}
           </Link>
         </div>

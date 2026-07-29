@@ -25,7 +25,7 @@ export default function ProfilePage() {
         <main className="mx-auto max-w-5xl px-4 py-16 text-center text-slate-400">
           Iniciá sesión para ver tu perfil.
           <div className="mt-4">
-            <Link href="/login" className="rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950">
+            <Link href="/login" className="cursor-pointer rounded-full bg-cyan-500 px-4 py-2 font-medium text-slate-950 transition-all duration-200 hover:scale-105 hover:brightness-110 active:scale-95">
               Ir a login
             </Link>
           </div>

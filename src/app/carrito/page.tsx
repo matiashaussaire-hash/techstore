@@ -28,16 +28,16 @@ export default function CartPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="cursor-pointer rounded-full border border-white/10 px-3 py-1 text-slate-200">-</button>
+                  <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity - 1)} className="cursor-pointer rounded-full border border-white/10 px-3 py-1 text-slate-200 transition-all duration-200 hover:scale-110 hover:border-cyan-400/40 hover:bg-white/10 active:scale-95">-</button>
                   <span className="text-white">{item.quantity}</span>
-                  <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="cursor-pointer rounded-full border border-white/10 px-3 py-1 text-slate-200">+</button>
-                  <button type="button" onClick={() => removeItem(item.product.id)} className="ml-2 cursor-pointer text-sm text-rose-400">Eliminar</button>
+                  <button type="button" onClick={() => updateQuantity(item.product.id, item.quantity + 1)} className="cursor-pointer rounded-full border border-white/10 px-3 py-1 text-slate-200 transition-all duration-200 hover:scale-110 hover:border-cyan-400/40 hover:bg-white/10 active:scale-95">+</button>
+                  <button type="button" onClick={() => removeItem(item.product.id)} className="ml-2 cursor-pointer text-sm text-rose-400 transition-colors duration-200 hover:text-rose-300">Eliminar</button>
                 </div>
               </div>
             ))
           )}
           {items.length > 0 ? (
-            <button type="button" onClick={clearCart} className="cursor-pointer text-sm text-slate-400 hover:text-white">
+            <button type="button" onClick={clearCart} className="cursor-pointer text-sm text-slate-400 transition-colors duration-200 hover:text-white">
               Vaciar carrito
             </button>
           ) : null}
@@ -48,7 +48,7 @@ export default function CartPage() {
             <span>Subtotal</span>
             <span>${subtotal.toLocaleString("es-AR")}</span>
           </div>
-          <Link href="/checkout" className="mt-6 block cursor-pointer rounded-full bg-cyan-500 px-4 py-3 text-center font-medium text-slate-950">
+          <Link href="/checkout" className="mt-6 block cursor-pointer rounded-full bg-cyan-500 px-4 py-3 text-center font-medium text-slate-950 transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-95">
             Continuar al checkout
           </Link>
         </aside>

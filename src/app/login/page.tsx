@@ -63,7 +63,7 @@ export default function LoginPage() {
                 setError("");
                 setInfo("");
               }}
-              className={`cursor-pointer rounded-full px-4 py-2 ${mode === "login" ? "bg-cyan-500 text-slate-950" : "bg-slate-800 text-slate-300"}`}
+              className={`cursor-pointer rounded-full px-4 py-2 transition-all duration-200 active:scale-95 ${mode === "login" ? "bg-cyan-500 text-slate-950 hover:brightness-110" : "bg-slate-800 text-slate-300 hover:bg-slate-700"}`}
             >
               Iniciar sesión
             </button>
@@ -74,7 +74,7 @@ export default function LoginPage() {
                 setError("");
                 setInfo("");
               }}
-              className={`cursor-pointer rounded-full px-4 py-2 ${mode === "register" ? "bg-cyan-500 text-slate-950" : "bg-slate-800 text-slate-300"}`}
+              className={`cursor-pointer rounded-full px-4 py-2 transition-all duration-200 active:scale-95 ${mode === "register" ? "bg-cyan-500 text-slate-950 hover:brightness-110" : "bg-slate-800 text-slate-300 hover:bg-slate-700"}`}
             >
               Crear cuenta
             </button>
@@ -85,7 +85,7 @@ export default function LoginPage() {
                 required
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-200"
+                className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-200 transition-colors duration-200 focus:border-cyan-400/50 focus:outline-none"
                 placeholder="Nombre"
               />
             ) : null}
@@ -94,7 +94,7 @@ export default function LoginPage() {
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-200"
+              className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-200 transition-colors duration-200 focus:border-cyan-400/50 focus:outline-none"
               placeholder="Correo"
             />
             <input
@@ -102,7 +102,7 @@ export default function LoginPage() {
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-200"
+              className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-200 transition-colors duration-200 focus:border-cyan-400/50 focus:outline-none"
               placeholder="Contraseña"
             />
             {error ? <p className="text-sm text-rose-400">{error}</p> : null}
@@ -113,7 +113,7 @@ export default function LoginPage() {
             ) : null}
             <button
               type="submit"
-              className="w-full cursor-pointer rounded-full bg-cyan-500 px-4 py-3 font-medium text-slate-950"
+              className="w-full cursor-pointer rounded-full bg-cyan-500 px-4 py-3 font-medium text-slate-950 transition-all duration-200 hover:scale-[1.02] hover:brightness-110 active:scale-95"
             >
               {mode === "login" ? "Ingresar" : "Registrarme"}
             </button>
@@ -121,7 +121,7 @@ export default function LoginPage() {
           <p className="mt-4 text-center text-sm text-slate-400">
             ¿Eres administrador? Usa <span className="text-cyan-400">admin@tiendavs.com</span> con la contraseña <span className="text-cyan-400">admin123</span>.
           </p>
-          <Link href="/" className="mt-4 block text-center text-sm text-cyan-400">
+          <Link href="/" className="mt-4 block cursor-pointer text-center text-sm text-cyan-400 transition-colors duration-200 hover:text-cyan-300">
             Volver al inicio
           </Link>
         </div>

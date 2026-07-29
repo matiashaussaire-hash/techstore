@@ -50,8 +50,8 @@ export default function AdminPage() {
                   <p className="text-sm text-slate-400">Stock: {product.stock} • Precio: ${product.price.toLocaleString("es-AR")}</p>
                 </div>
                 <div className="flex gap-2">
-                  <button type="button" className="cursor-pointer rounded-full border border-white/10 px-3 py-2 text-sm text-slate-200">Editar</button>
-                  <button type="button" className="cursor-pointer rounded-full border border-white/10 px-3 py-2 text-sm text-slate-200">Eliminar</button>
+                  <button type="button" className="cursor-pointer rounded-full border border-white/10 px-3 py-2 text-sm text-slate-200 transition-all duration-200 hover:scale-105 hover:border-cyan-400/40 hover:bg-white/10 active:scale-95">Editar</button>
+                  <button type="button" className="cursor-pointer rounded-full border border-white/10 px-3 py-2 text-sm text-slate-200 transition-all duration-200 hover:scale-105 hover:border-rose-400/40 hover:bg-rose-500/10 hover:text-rose-300 active:scale-95">Eliminar</button>
                 </div>
               </div>
             ))}
