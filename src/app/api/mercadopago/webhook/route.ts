@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { MercadoPagoConfig, Payment } from "mercadopago";
-import { updateOrderStatus } from "@/lib/orders-server";
+import { updateOrderStatus, getOrderByIdForEmail, markAdminNotified } from "@/lib/orders-server";
+import { sendOrderApprovedEmail, sendCustomerConfirmationEmail } from "@/lib/email";
 import type { OrderStatus } from "@/types/product";
 
 // This route uses the Mercado Pago Node SDK which relies on Node.js APIs.
@@ -93,6 +94,42 @@ export async function POST(request: Request) {
     console.info(
       `[mercadopago/webhook] Order ${orderId} updated → status=${status}, payment_id=${paymentId}, mp_status=${payment.status}`,
     );
+
+    // Send admin notification email only when payment is approved.
+    // Pending, rejected, and cancelled payments do not trigger an email.
+    if (status === "approved") {
+      try {
+        const fullOrder = await getOrderByIdForEmail(orderId);
+        if (fullOrder) {
+          // Prevent duplicate emails: only send if the admin hasn't been
+          // notified yet for this order. Mercado Pago may send multiple
+          // webhook notifications for the same payment.
+          if (fullOrder.adminNotifiedAt) {
+            console.info(
+              `[mercadopago/webhook] Order ${orderId} already notified at ${fullOrder.adminNotifiedAt}. Skipping email.`,
+            );
+          } else {
+            // Send notification to the store admin
+            await sendOrderApprovedEmail(fullOrder);
+            // Send confirmation to the customer
+            await sendCustomerConfirmationEmail(fullOrder);
+            // Mark as notified to prevent duplicates
+            await markAdminNotified(orderId);
+          }
+        } else {
+          console.warn(
+            `[mercadopago/webhook] No se pudo obtener la orden ${orderId} para enviar el email al administrador.`,
+          );
+        }
+      } catch (emailError) {
+        // Email failure must not break the webhook response — the order
+        // is already updated in Supabase at this point.
+        console.error(
+          `[mercadopago/webhook] Error enviando email para la orden ${orderId}:`,
+          emailError,
+        );
+      }
+    }
 
     return NextResponse.json({ ok: true, orderId, paymentStatus: payment.status });
   } catch (error) {

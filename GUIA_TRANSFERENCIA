@@ -25,6 +25,7 @@ Este documento describe el proceso para entregar al cliente la propiedad total d
 | **Repositorio GitHub** | [github.com](https://github.com) | Ownership o acceso admin al repositorio del proyecto |
 | **Proyecto Supabase** | [supabase.com](https://supabase.com) | Proyecto propio con base de datos y autenticación |
 | **Cuenta Mercado Pago** | [mercadopago.com](https://www.mercadopago.com) | Cuenta propia con credenciales de pago |
+| **Cuenta Resend** | [resend.com](https://resend.com) | Cuenta propia para envío de emails transaccionales |
 | **Deploy en Vercel** | [vercel.com](https://vercel.com) | Proyecto + dominio + variables de entorno |
 | **Usuario administrador** | Supabase (tabla `profiles`) | Cuenta con permisos de admin sobre la tienda |
 
@@ -32,7 +33,7 @@ Este documento describe el proceso para entregar al cliente la propiedad total d
 
 ## 1. Cuentas y servicios externos
 
-El cliente debe tener el control de estas cuatro cuentas. Cada una puede gestionarse de dos formas: **recibiendo** una cuenta/proyecto existente del desarrollador, o **creando** uno nuevo desde cero.
+El cliente debe tener el control de estas cinco cuentas. Cada una puede gestionarse de dos formas: **recibiendo** una cuenta/proyecto existente del desarrollador, o **creando** uno nuevo desde cero.
 
 ### 1.1 GitHub
 
@@ -136,7 +137,21 @@ Para producción, el cliente debe usar el **access token de producción** (no el
 
 > Si el cliente cambia de dominio, debe actualizar esta URL en Mercado Pago **y** la variable `NEXT_PUBLIC_SITE_URL` en Vercel.
 
-### 1.4 Vercel
+### 1.4 Resend (notificaciones por email)
+
+El sistema envía automáticamente un email al administrador cuando un pago es aprobado, con todos los datos del pedido para que el negocio pueda prepararlo y coordinar la entrega.
+
+1. El cliente crea una cuenta en [resend.com](https://resend.com).
+2. Genera una **API Key** desde *Dashboard → API Keys → Create API Key*.
+3. Verifica su dominio o usa el email de prueba `onboarding@resend.dev` (solo para testing).
+4. Configura las variables:
+   - `RESEND_API_KEY`: la API key generada.
+   - `EMAIL_ADMIN_ADDRESS`: el email del administrador del negocio que recibirá las notificaciones.
+   - `EMAIL_FROM_ADDRESS` (opcional): el email remitente verificado en Resend. Si no se define, se usa `onboarding@resend.dev`.
+
+> **Logística**: el sistema **no** integra empresas de envío (Correo Argentino, Andreani, OCA, etc.), cálculo automático de envíos ni seguimiento de paquetes. La logística de envío (despacho, costos, seguimiento) es responsabilidad del negocio y debe coordinarse fuera del sistema. La responsabilidad del sistema termina en: 1) recibir el pago confirmado, 2) guardar la orden, 3) avisar al administrador por email.
+
+### 1.5 Vercel
 
 El cliente debe tener el control del deploy en Vercel.
 
@@ -163,7 +178,7 @@ Si el desarrollador ya tiene el proyecto desplegado:
 
 ## 2. Variables de entorno
 
-La aplicación requiere **5 variables de entorno**. El cliente debe configurarlas con los valores de **sus propias cuentas**.
+La aplicación requiere **8 variables de entorno**. El cliente debe configurarlas con los valores de **sus propias cuentas**.
 
 ### Listado de variables
 
@@ -174,6 +189,9 @@ La aplicación requiere **5 variables de entorno**. El cliente debe configurarla
 | `SUPABASE_SERVICE_ROLE_KEY` | 🔒 Secreta | Clave de servicio de Supabase (servidor, omite RLS) | Supabase → *Project Settings → API → Project API keys → service_role* |
 | `MERCADOPAGO_ACCESS_TOKEN` | 🔒 Secreta | Token de acceso de Mercado Pago para procesar pagos | Mercado Pago → *Tu negocio → Configuración → Credenciales* |
 | `NEXT_PUBLIC_SITE_URL` | Pública | URL pública del sitio para construir las URLs de retorno de Mercado Pago | URL del deploy en Vercel (ej. `https://[dominio-del-cliente]`) |
+| `RESEND_API_KEY` | 🔒 Secreta | API key de Resend para enviar notificaciones de pedidos al administrador | Resend → *API Keys* (https://resend.com/api-keys) |
+| `EMAIL_ADMIN_ADDRESS` | 🔒 Secreta | Email del administrador que recibe las notificaciones de pedidos aprobados | Email del administrador del negocio |
+| `EMAIL_FROM_ADDRESS` | 🔒 Secreta | Email remitente verificado en Resend (opcional, default: `onboarding@resend.dev`) | Resend → *Domains* o *Emails* verificados |
 
 ### Dónde se configuran
 
@@ -188,9 +206,14 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=[anon-key-del-cliente]
 SUPABASE_SERVICE_ROLE_KEY=[service-role-key-del-cliente]
 MERCADOPAGO_ACCESS_TOKEN=[access-token-del-cliente]
 NEXT_PUBLIC_SITE_URL=https://[dominio-del-cliente]
+
+# Email / Resend (notificaciones al administrador cuando un pago es aprobado)
+RESEND_API_KEY=[resend-api-key-del-cliente]
+EMAIL_ADMIN_ADDRESS=[email-del-administrador]
+EMAIL_FROM_ADDRESS=[email-remitente-verificado-en-resend]
 ```
 
-> ⚠️ **Seguridad**: `SUPABASE_SERVICE_ROLE_KEY` y `MERCADOPAGO_ACCESS_TOKEN` son **secretos críticos**. Entregarlos por canal seguro (no por chat/email público). **Nunca** subirlos al repositorio Git.
+> ⚠️ **Seguridad**: `SUPABASE_SERVICE_ROLE_KEY`, `MERCADOPAGO_ACCESS_TOKEN` y `RESEND_API_KEY` son **secretos críticos**. Entregarlos por canal seguro (no por chat/email público). **Nunca** subirlos al repositorio Git.
 
 ### Token de Mercado Pago: sandbox vs producción
 
@@ -296,6 +319,7 @@ Una vez con rol `admin`, el cliente puede:
 - **Agregar productos** (nombre, descripción, precio, stock, imagen, categoría, destacado).
 - **Editar productos** existentes.
 - **Eliminar productos**.
+- **Ver todos los pedidos** con datos del comprador, método de entrega, dirección, productos y total.
 - Ver todas las órdenes (vía `getAllOrders()`).
 - Ver todos los perfiles de usuarios.
 
@@ -387,12 +411,14 @@ Vercel hará redeploy automáticamente.
 - [ ] El cliente tiene acceso al repositorio GitHub (transferido o creado).
 - [ ] El cliente creó o recibió su proyecto Supabase.
 - [ ] El cliente tiene acceso a su cuenta de Mercado Pago.
+- [ ] El cliente creó su cuenta de Resend.
 - [ ] El cliente tiene acceso a su proyecto en Vercel.
 
 ### Base de datos
 
 - [ ] Se ejecutó `supabase/schema.sql` en el proyecto Supabase del cliente.
 - [ ] Las tablas `profiles`, `orders`, `order_items`, `products` existen.
+- [ ] La columna `delivery_method` existe en la tabla `orders`.
 - [ ] RLS está habilitado en todas las tablas.
 - [ ] Los triggers y políticas están activos.
 
@@ -403,6 +429,9 @@ Vercel hará redeploy automáticamente.
 - [ ] `SUPABASE_SERVICE_ROLE_KEY` 🔒
 - [ ] `MERCADOPAGO_ACCESS_TOKEN` 🔒 (token de **producción**, no `TEST-`)
 - [ ] `NEXT_PUBLIC_SITE_URL`
+- [ ] `RESEND_API_KEY` 🔒
+- [ ] `EMAIL_ADMIN_ADDRESS` 🔒
+- [ ] `EMAIL_FROM_ADDRESS` 🔒 (opcional)
 
 ### URLs
 
@@ -426,6 +455,8 @@ Vercel hará redeploy automáticamente.
 - [ ] Se hizo redeploy en Vercel después de los cambios.
 - [ ] Se verificó el flujo de compra completo end-to-end.
 - [ ] Se verificó que el webhook actualiza el estado de las órdenes.
+- [ ] Se verificó que el administrador recibe el email de notificación tras un pago aprobado.
+- [ ] Se verificó que el método de entrega aparece en el email y en el panel de pedidos.
 
 ---
 

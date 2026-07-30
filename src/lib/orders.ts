@@ -1,12 +1,13 @@
 import { supabase, isSupabaseConfigured } from "./supabase";
 import { getSupabaseAdminClient } from "./supabase-server";
-import type { Address, CartItem, Order, OrderStatus } from "@/types/product";
+import type { Address, CartItem, DeliveryMethod, Order, OrderStatus } from "@/types/product";
 
 type CreatePendingOrderInput = {
   userId?: string;
   customerName: string;
   email: string;
   address: Address;
+  deliveryMethod?: DeliveryMethod;
   items: CartItem[];
   total: number;
 };
@@ -17,6 +18,8 @@ type SupabaseOrderRecord = {
   customer_name: string | null;
   email: string | null;
   address: Address | null;
+  delivery_method: string | null;
+  admin_notified_at: string | null;
   total: number;
   status: string;
   payment_id: string | null;
@@ -72,6 +75,8 @@ function mapSupabaseOrder(
       postalCode: "",
       country: "Argentina",
     },
+    deliveryMethod: (record.delivery_method as DeliveryMethod) ?? undefined,
+    adminNotifiedAt: record.admin_notified_at ?? undefined,
     items: items ?? [],
     total: Number(record.total),
     status: (record.status as OrderStatus) ?? "pending",
@@ -108,6 +113,7 @@ export async function createPendingOrder(input: CreatePendingOrderInput): Promis
     customerName: input.customerName,
     email: input.email,
     address: input.address,
+    deliveryMethod: input.deliveryMethod,
     items: input.items,
     total: input.total,
     status: "pending",
@@ -128,6 +134,7 @@ export async function createPendingOrder(input: CreatePendingOrderInput): Promis
     customer_name: order.customerName,
     email: order.email,
     address: order.address,
+    delivery_method: input.deliveryMethod ?? null,
     total: order.total,
     status: order.status,
     payment_id: null,

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { useCart } from "@/context/cart-context";
 import { useAuth } from "@/context/auth-context";
-import type { Address } from "@/types/product";
+import type { Address, DeliveryMethod } from "@/types/product";
 
 // ── Argentine provinces ──────────────────────────────────────────────
 const ARGENTINE_PROVINCES = [
@@ -306,6 +306,7 @@ export default function CheckoutPage() {
   const [city, setCity] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [country] = useState("Argentina");
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("Envío a domicilio");
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -348,7 +349,7 @@ export default function CheckoutPage() {
     if (cpErr) e.postalCode = cpErr;
 
     return e;
-  }, [firstName, lastName, email, phone, addressLine, province, city, postalCode]);
+  }, [firstName, lastName, email, phone, addressLine, province, city, postalCode, deliveryMethod]);
 
   const hasErrors = Object.keys(fieldErrors).length > 0;
 
@@ -432,6 +433,7 @@ export default function CheckoutPage() {
           customerName: fullName,
           email: email.trim(),
           address,
+          deliveryMethod,
           items,
           total,
         }),
@@ -451,6 +453,7 @@ export default function CheckoutPage() {
         customerName: fullName,
         email: email.trim(),
         address,
+        deliveryMethod,
         items,
         total,
         status: "pending",
@@ -619,6 +622,29 @@ export default function CheckoutPage() {
                 value={country}
                 className="w-full rounded-2xl border border-white/10 bg-slate-800 px-4 py-3 text-slate-400"
               />
+            </div>
+
+            {/* ── Delivery method ── */}
+            <div className="md:col-span-2">
+              <label className="mb-1 block text-sm text-slate-400">
+                Método de entrega
+              </label>
+              <select
+                value={deliveryMethod}
+                onChange={(e) => setDeliveryMethod(e.target.value)}
+                className="w-full rounded-2xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-200 transition-colors duration-200 focus:border-cyan-400/50 focus:outline-none"
+              >
+                <option value="Envío a domicilio">Envío a domicilio</option>
+                <option value="Retiro en local">Retiro en local</option>
+                <option value="Envío por Correo Argentino">Envío por Correo Argentino</option>
+                <option value="Cadetería propia">Cadetería propia</option>
+                <option value="Mensajería">Mensajería</option>
+                <option value="Moto">Moto</option>
+                <option value="Envío tercerizado">Envío tercerizado</option>
+              </select>
+              <p className="mt-1 text-xs text-slate-500">
+                Si necesitás otra opción, escribila en la dirección o contactanos después de la compra.
+              </p>
             </div>
           </div>
 

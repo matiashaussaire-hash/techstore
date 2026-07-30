@@ -15,6 +15,8 @@ create table if not exists public.orders (
   customer_name text,
   email text,
   address jsonb,
+  delivery_method text,
+  admin_notified_at timestamptz,
   total numeric(12,2) not null,
   status text not null default 'pending'
     check (status in ('pending', 'approved', 'rejected', 'cancelled')),
@@ -22,6 +24,32 @@ create table if not exists public.orders (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Add delivery_method column to existing orders tables (safe if already exists)
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+    and table_name = 'orders'
+    and column_name = 'delivery_method'
+  ) then
+    alter table public.orders add column delivery_method text;
+  end if;
+end $$;
+
+-- Add admin_notified_at column to existing orders tables (safe if already exists)
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+    and table_name = 'orders'
+    and column_name = 'admin_notified_at'
+  ) then
+    alter table public.orders add column admin_notified_at timestamptz;
+  end if;
+end $$;
 
 create table if not exists public.order_items (
   id uuid primary key default gen_random_uuid(),

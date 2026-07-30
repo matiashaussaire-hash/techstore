@@ -33,6 +33,13 @@ export type Address = {
   country: string;
 };
 
+/**
+ * Delivery method is a free-form string so the business can define
+ * its own options (e.g. "Retiro en local", "Envío a domicilio",
+ * "Envío por Correo Argentino", "Cadetería propia", etc.).
+ */
+export type DeliveryMethod = string;
+
 export type OrderStatus = "pending" | "approved" | "rejected" | "cancelled";
 
 export type Order = {
@@ -41,6 +48,8 @@ export type Order = {
   customerName: string;
   email: string;
   address: Address;
+  deliveryMethod?: DeliveryMethod;
+  adminNotifiedAt?: string;
   items: CartItem[];
   total: number;
   status: OrderStatus;

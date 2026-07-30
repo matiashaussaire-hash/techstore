@@ -42,6 +42,7 @@ type CheckoutRequestBody = {
     postalCode: string;
     country: string;
   };
+  deliveryMethod?: "pickup" | "delivery";
   items: CartItem[];
   total: number;
 };
@@ -110,6 +111,7 @@ export async function POST(request: Request) {
       customerName: body.customerName,
       email: body.email,
       address: body.address,
+      deliveryMethod: body.deliveryMethod,
       items: body.items,
       total: body.total,
     });
