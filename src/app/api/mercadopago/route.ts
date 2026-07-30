@@ -163,12 +163,18 @@ export async function POST(request: Request) {
       init_point: response.init_point,
       sandbox_init_point: response.sandbox_init_point,
     });
-  } catch (error) {
-    console.error("[mercadopago/route] Error creating preference:", error);
-    const message =
-      error instanceof Error
-        ? error.message
-        : "No se pudo crear la preferencia de Mercado Pago.";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch (error: unknown) {
+    console.error("=== ERROR MERCADO PAGO ===");
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : JSON.stringify(error, null, 2),
+      },
+      { status: 500 }
+    );
   }
 }
