@@ -1,23 +1,47 @@
 "use client";
 
-import { Suspense, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { ProductCard } from "@/components/product-card";
-import { categories, getProductsByCategory } from "@/lib/mock-data";
+import { categories, initialProducts } from "@/lib/mock-data";
+import type { Product } from "@/types/product";
 
 function CatalogContent() {
   const searchParams = useSearchParams();
   const [query, setQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("category") ?? "all");
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [loading, setLoading] = useState(true);
 
-  const products = useMemo(() => {
-    const list = getProductsByCategory(selectedCategory);
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        if (data.products && data.products.length > 0) {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        console.error("[catalogo] Error fetching products:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const filtered = useMemo(() => {
+    const list = selectedCategory === "all" || !selectedCategory
+      ? products
+      : products.filter((p) => p.category === selectedCategory);
     const normalized = query.toLowerCase();
-    return list.filter((product) =>
-      product.name.toLowerCase().includes(normalized) || product.description.toLowerCase().includes(normalized),
+    return list.filter(
+      (product) =>
+        product.name.toLowerCase().includes(normalized) ||
+        product.description.toLowerCase().includes(normalized),
     );
-  }, [query, selectedCategory]);
+  }, [query, selectedCategory, products]);
 
   return (
     <>
@@ -47,7 +71,7 @@ function CatalogContent() {
       </section>
 
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {products.map((product) => (
+        {filtered.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

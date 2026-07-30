@@ -1,24 +1,60 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
-import { getProductBySlug } from "@/lib/mock-data";
+import { getProductBySlug as getMockProduct } from "@/lib/mock-data";
 import { useCart } from "@/context/cart-context";
+import type { Product } from "@/types/product";
 
 export default function ProductPage() {
   const params = useParams<{ slug: string }>();
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = useMemo(() => getProductBySlug(params.slug), [params.slug]);
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        if (data.products) {
+          const found = data.products.find(
+            (p: Product) => p.slug === params.slug,
+          );
+      if (found) {
+            setProduct(found);
+            setLoading(false);
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("[producto] Error fetching products:", err);
+      }
+      // Fallback to mock data
+      const mock = getMockProduct(params.slug);
+      if (mock) setProduct(mock);
+      setLoading(false);
+    }
+    load();
+  }, [params.slug]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-950">
+        <Navbar />
+        <main className="mx-auto max-w-5xl px-4 py-10 text-slate-400">Cargando producto...</main>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
       <div className="min-h-screen bg-slate-950">
         <Navbar />
-        <main className="mx-auto max-w-5xl px-4 py-10">Producto no encontrado.</main>
+        <main className="mx-auto max-w-5xl px-4 py-10 text-slate-400">Producto no encontrado.</main>
       </div>
     );
   }

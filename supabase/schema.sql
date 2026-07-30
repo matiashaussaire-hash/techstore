@@ -33,6 +33,21 @@ create table if not exists public.order_items (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.products (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text not null unique,
+  description text not null,
+  price numeric(12,2) not null,
+  stock integer not null default 0,
+  image text not null,
+  category text not null,
+  rating numeric(2,1) not null default 0,
+  featured boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
 create index if not exists orders_user_id_idx 
 on public.orders(user_id);
 
@@ -253,3 +268,50 @@ with check (
     )
   )
 );
+
+
+-- PRODUCTS RLS
+
+alter table public.products enable row level security;
+
+drop policy if exists "Anyone can view products"
+on public.products;
+
+create policy "Anyone can view products"
+on public.products
+for select
+using (true);
+
+drop policy if exists "Only admin can insert products"
+on public.products;
+
+create policy "Only admin can insert products"
+on public.products
+for insert
+with check (public.is_admin());
+
+drop policy if exists "Only admin can update products"
+on public.products;
+
+create policy "Only admin can update products"
+on public.products
+for update
+using (public.is_admin());
+
+drop policy if exists "Only admin can delete products"
+on public.products;
+
+create policy "Only admin can delete products"
+on public.products
+for delete
+using (public.is_admin());
+
+
+-- PRODUCTS TRIGGER
+
+drop trigger if exists set_products_updated_at on public.products;
+
+create trigger set_products_updated_at
+before update on public.products
+for each row
+execute function public.set_updated_at();

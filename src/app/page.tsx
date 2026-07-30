@@ -1,12 +1,36 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Navbar } from "@/components/navbar";
 import { ProductCard } from "@/components/product-card";
-import { categories, getFeaturedProducts } from "@/lib/mock-data";
+import { categories, initialProducts } from "@/lib/mock-data";
+import type { Product } from "@/types/product";
 
 export default function HomePage() {
-  const featured = getFeaturedProducts();
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        if (data.products && data.products.length > 0) {
+          setProducts(data.products);
+        }
+      } catch (err) {
+        console.error("[home] Error fetching products:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const featured = products.filter((p) => p.featured).length > 0
+    ? products.filter((p) => p.featured)
+    : products.slice(0, 3);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.12),_transparent_40%)]">
