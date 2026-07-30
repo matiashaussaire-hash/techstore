@@ -48,6 +48,27 @@ export async function PUT(
     }
 
     const body = await request.json();
+
+    // Validate price/stock if present
+    if (body.price !== undefined) {
+      const price = Number(body.price);
+      if (Number.isNaN(price) || price < 0) {
+        return NextResponse.json(
+          { error: "El precio no puede ser negativo." },
+          { status: 400 },
+        );
+      }
+    }
+    if (body.stock !== undefined) {
+      const stock = Number(body.stock);
+      if (Number.isNaN(stock) || stock < 0) {
+        return NextResponse.json(
+          { error: "El stock no puede ser negativo." },
+          { status: 400 },
+        );
+      }
+    }
+
     const product = await updateProduct(id, body);
     return NextResponse.json({ product });
   } catch (error) {

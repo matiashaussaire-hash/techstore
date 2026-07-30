@@ -38,8 +38,8 @@ create table if not exists public.products (
   name text not null,
   slug text not null unique,
   description text not null,
-  price numeric(12,2) not null,
-  stock integer not null default 0,
+  price numeric(12,2) not null check (price >= 0),
+  stock integer not null default 0 check (stock >= 0),
   image text not null,
   category text not null,
   rating numeric(2,1) not null default 0,
@@ -47,6 +47,12 @@ create table if not exists public.products (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+create index if not exists products_category_idx
+on public.products(category);
+
+create index if not exists products_slug_idx
+on public.products(slug);
 
 create index if not exists orders_user_id_idx 
 on public.orders(user_id);

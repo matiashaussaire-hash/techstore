@@ -67,12 +67,28 @@ export async function POST(request: Request) {
       );
     }
 
+    const price = Number(body.price);
+    const stock = Number(body.stock) || 0;
+
+    if (Number.isNaN(price) || price < 0) {
+      return NextResponse.json(
+        { error: "El precio no puede ser negativo." },
+        { status: 400 },
+      );
+    }
+    if (Number.isNaN(stock) || stock < 0) {
+      return NextResponse.json(
+        { error: "El stock no puede ser negativo." },
+        { status: 400 },
+      );
+    }
+
     const product = await createProduct({
       name: body.name,
       slug: body.slug ?? "",
       description: body.description ?? "",
-      price: Number(body.price),
-      stock: Number(body.stock) || 0,
+      price,
+      stock,
       image: body.image ?? "",
       category: body.category,
       featured: body.featured ?? false,
