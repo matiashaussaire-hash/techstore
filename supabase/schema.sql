@@ -27,6 +27,7 @@ create table if not exists public.order_items (
   id uuid primary key default gen_random_uuid(),
   order_id text not null references public.orders(id) on delete cascade,
   product_id text not null,
+  product_name text,
   quantity integer not null check (quantity > 0),
   unit_price numeric(12,2) not null,
   created_at timestamptz not null default now()
