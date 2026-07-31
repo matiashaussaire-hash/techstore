@@ -318,7 +318,7 @@ export default function CheckoutPage() {
     }
   }, [user?.email, email]);
 
-  const total = useMemo(() => subtotal + 1500, [subtotal]);
+  const total = useMemo(() => subtotal, [subtotal]);
 
   // ── Run all validations ──────────────────────────────────────────
   const fieldErrors = useMemo(() => {
